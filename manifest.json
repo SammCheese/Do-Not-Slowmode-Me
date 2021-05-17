@@ -1,0 +1,7 @@
+{
+    "name": "doNotSlowmodeMe",
+    "version": "1.0.0", 
+    "description": "Warns you before sending a Message about slowmode",
+    "author": "SammCheese",
+    "license": "MIT"
+}
