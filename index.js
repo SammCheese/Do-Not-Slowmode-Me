@@ -1,7 +1,12 @@
 /* eslint-disable semi */
 const { Plugin } = require('powercord/entities')
-const { getModule, channels, messages } = require('powercord/webpack')
+const { getModule, channels, messages, React } = require('powercord/webpack')
 const { inject, uninject } = require('powercord/injector')
+const { open } = require('powercord/modal')
+
+const Modal = require('./components/modal.jsx')
+
+let messagecontent;
 
 function checkCooldown () {
   const channel = channels.getChannelId()
@@ -22,7 +27,6 @@ function checkPerms () {
   return false
 }
 
-
 module.exports = class doNotSlowmode extends Plugin {
   async startPlugin () {
     this._injectMessageSent()
@@ -35,9 +39,17 @@ module.exports = class doNotSlowmode extends Plugin {
 
   _injectMessageSent () {
     inject('dontSlowmodeMeMommy', messages, 'sendMessage', args => {
-      if (!checkPerms() && checkCooldown() >= this.settings.get('slowmodeTrigger', '600')) {
+      if (!args[1]?.__DNSM_afterWarn && !checkPerms() && checkCooldown() >= this.settings.get('slowmodeTrigger', '600')) {
         const msg = args[1]
-        return false;
+        messagecontent = args
+        open(() => React.createElement(Modal, {
+          slowmode: checkCooldown(),
+          channel: channels.getChannelId(),
+          message: msg
+        }));
+        return false
+      } else if (args[1]?.__DNSM_afterWarn) {
+        return messagecontent
       }
       return args
     }, true);
