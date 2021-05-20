@@ -6,7 +6,7 @@ const { open } = require('powercord/modal')
 
 const Modal = require('./components/modal.jsx')
 
-let messagecontent;
+let messagecontent
 
 function checkCooldown () {
   const channel = channels.getChannelId()
@@ -42,6 +42,7 @@ module.exports = class doNotSlowmode extends Plugin {
       if (!args[1]?.__DNSM_afterWarn && !checkPerms() && checkCooldown() >= this.settings.get('slowmodeTrigger', '600')) {
         const msg = args[1]
         messagecontent = args
+
         open(() => React.createElement(Modal, {
           slowmode: checkCooldown(),
           channel: channels.getChannelId(),
