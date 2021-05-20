@@ -1,4 +1,4 @@
-# Dont Slowmode Me Daddy~!
+# Dont Slowmode Me Mommy~!
 
 A Powercord Plugin to Prevent you getting stuck in the Slowmode Bucket
 
