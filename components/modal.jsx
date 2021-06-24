@@ -21,7 +21,7 @@ module.exports = ({ slowmode, channel, message }) =>
   <Modal.Footer>
     <Button
       style={{ marginRight: '10px' }}
-      onClick={ () => { sendMessage(channel, { ...message, __DNSM_afterWarn: true }); closeModal(); } }
+      onClick={ () => { closeModal();  sendMessage(channel, { ...message, __DNSM_afterWarn: true })} }
       color={ Button.Colors.RED }>
       Send Message Anyway
     </Button>

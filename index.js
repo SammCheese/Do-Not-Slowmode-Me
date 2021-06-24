@@ -1,27 +1,28 @@
 /* eslint-disable semi */
 const { Plugin } = require('powercord/entities')
-const { getModule, channels, messages, React } = require('powercord/webpack')
 const { inject, uninject } = require('powercord/injector')
 const { open } = require('powercord/modal')
+const { getModule, channels, messages, React } = require('powercord/webpack')
+
+const { Permissions } = getModule([ 'Permissions' ], false)
+const channelObj      = getModule([ 'getChannel' ], false)
+const highestRole     = getModule([ 'getHighestRole' ], false)
+
+const channel = channels.getChannelId()
 
 const Modal = require('./components/modal.jsx')
 
 let messagecontent
 
 function checkCooldown () {
-  const channel = channels.getChannelId()
-  const Channelcooldown = getModule([ 'getChannel' ], false).getChannel(channel).rateLimitPerUser
+  const Channelcooldown = channelObj.getChannel(channel).rateLimitPerUser
 
   return Channelcooldown
 }
 
 function checkPerms () {
-  const channelObj      = getModule([ 'getChannel' ], false).getChannel(channels.getChannelId())
-  const highestRole     = getModule([ 'getHighestRole' ], false)
-
-  const { Permissions } = getModule([ 'Permissions' ], false)
-
-  if (highestRole.can(Permissions.MANAGE_MESSAGES || Permissions.MANAGE_CHANNEL, channelObj)) {
+  const channelObjs = channelObj.getChannel(channel)
+  if (highestRole.can(Permissions.MANAGE_MESSAGES || Permissions.MANAGE_CHANNEL, channelObjs)) {
     return true
   }
   return false
@@ -52,7 +53,7 @@ module.exports = class doNotSlowmode extends Plugin {
       } else if (args[1]?.__DNSM_afterWarn) {
         return messagecontent
       }
-      return args
+      return args;
     }, true);
   }
 
