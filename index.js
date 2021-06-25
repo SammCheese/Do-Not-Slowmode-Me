@@ -8,19 +8,19 @@ const { Permissions } = getModule([ 'Permissions' ], false)
 const channelObj      = getModule([ 'getChannel' ], false)
 const highestRole     = getModule([ 'getHighestRole' ], false)
 
-const channel = channels.getChannelId()
-
 const Modal = require('./components/modal.jsx')
 
 let messagecontent
 
 function checkCooldown () {
+  const channel = channels.getChannelId()
   const Channelcooldown = channelObj.getChannel(channel).rateLimitPerUser
 
   return Channelcooldown
 }
 
 function checkPerms () {
+  const channel = channels.getChannelId()
   const channelObjs = channelObj.getChannel(channel)
   if (highestRole.can(Permissions.MANAGE_MESSAGES || Permissions.MANAGE_CHANNEL, channelObjs)) {
     return true
