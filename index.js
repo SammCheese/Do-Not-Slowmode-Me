@@ -5,10 +5,11 @@ const { open } = require('powercord/modal')
 const { getModule, channels, messages, React } = require('powercord/webpack')
 
 const { Permissions } = getModule([ 'Permissions' ], false)
-const channelObj      = getModule([ 'getChannel' ], false)
+const channelObj      = getModule([ 'getChannel', 'getDMFromUserId' ], false)
 const highestRole     = getModule([ 'getHighestRole' ], false)
 
 const Modal = require('./components/modal.jsx')
+
 
 let messagecontent
 
@@ -19,9 +20,10 @@ function checkCooldown () {
   return Channelcooldown
 }
 
-function checkPerms () {
+function hasPermissions () {
   const channel = channels.getChannelId()
   const channelObjs = channelObj.getChannel(channel)
+  console.log(highestRole.can(Permissions.MANAGE_MESSAGES, channelObjs))
   if (highestRole.can(Permissions.MANAGE_MESSAGES || Permissions.MANAGE_CHANNEL, channelObjs)) {
     return true
   }
@@ -40,7 +42,7 @@ module.exports = class doNotSlowmode extends Plugin {
 
   _injectMessageSent () {
     inject('dontSlowmodeMeMommy', messages, 'sendMessage', args => {
-      if (!args[1]?.__DNSM_afterWarn && !checkPerms() && checkCooldown() >= this.settings.get('slowmodeTrigger', '600')) {
+      if (!args[1]?.__DNSM_afterWarn && !hasPermissions() && checkCooldown() >= this.settings.get('slowmodeTrigger', '600')) {
         const msg = args[1]
         messagecontent = args
 
