@@ -23,7 +23,6 @@ function checkCooldown () {
 function hasPermissions () {
   const channel = channels.getChannelId()
   const channelObjs = channelObj.getChannel(channel)
-  console.log(highestRole.can(Permissions.MANAGE_MESSAGES, channelObjs))
   if (highestRole.can(Permissions.MANAGE_MESSAGES || Permissions.MANAGE_CHANNEL, channelObjs)) {
     return true
   }
