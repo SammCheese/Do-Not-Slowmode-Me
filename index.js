@@ -7,6 +7,7 @@ const { getModule, channels, messages, React } = require('powercord/webpack')
 const { Permissions } = getModule([ 'Permissions' ], false)
 const channelObj      = getModule([ 'getChannel', 'getDMFromUserId' ], false)
 const highestRole     = getModule([ 'getHighestRole' ], false)
+const userStore       = getModule([ 'getCurrentUser', 'getUser' ], false)
 
 const Modal = require('./components/modal.jsx')
 
@@ -23,7 +24,9 @@ function checkCooldown () {
 function hasPermissions () {
   const channel = channels.getChannelId()
   const channelObjs = channelObj.getChannel(channel)
-  if (highestRole.can(Permissions.MANAGE_MESSAGES || Permissions.MANAGE_CHANNEL, channelObjs)) {
+  if (highestRole.can(Permissions.MANAGE_MESSAGES, userStore.getCurrentUser(), channelObjs) ||
+      highestRole.can(Permissions.MANAGE_CHANNEL, userStore.getCurrentUser(), channelObjs)
+      ) {
     return true
   }
   return false
