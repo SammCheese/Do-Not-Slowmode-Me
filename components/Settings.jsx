@@ -8,7 +8,6 @@ module.exports = class Settings extends React.PureComponent {
   }
   render() {
     const { getSetting, updateSetting } = this.props
-
     return (<div>
       <TextInput
         note="The Time in Seconds at which the Slowmode blocker should activate"
