@@ -10,7 +10,7 @@ module.exports = class Settings extends React.PureComponent {
     const { getSetting, updateSetting } = this.props
     return (<div>
       <TextInput
-        note="The Time in Seconds at which the Slowmode blocker should activate"
+        note="The Time in Seconds at which the Warning will be displayed"
         defaultValue={getSetting("slowmodeTrigger", "600")}
         onChange={v => updateSetting("slowmodeTrigger", v)}>
           Slowmode Trigger

@@ -4,7 +4,6 @@ const { Plugin } = require('powercord/entities')
 const { inject, uninject } = require('powercord/injector')
 const { getModule, channels, messages, React, constants: { Permissions } } = require('powercord/webpack')
 
-const highestRole = getModule(['getHighestRole'], false)
 const channelObj = getModule(['getChannel', 'getDMFromUserId'], false)
 
 const { getGuild } = getModule(['getGuild'], false);
@@ -24,11 +23,12 @@ module.exports = class doNotSlowmode extends Plugin {
   }
 
   _injectMessageSent() {
-    inject('dontSlowmodeMeMommy', messages, 'sendMessage', (args) => {
+    inject('dontSlowmodeMe', messages, 'sendMessage', (args) => {
+
+      // Avoid Unnecessary Checks if there is no Slowmode
+      if (!this.cooldownTime()) return args;
 
       const guildID = channelObj.getChannel(channels.getChannelId()).guild_id;
-
-      if (!guildID) return args;
 
       let permissions = this.getPermissionsRaw(
         getGuild(guildID),
@@ -37,22 +37,19 @@ module.exports = class doNotSlowmode extends Plugin {
 
       let parsedPermissions = this.parseBitFieldPermissions(permissions);
 
-      // There is no need to show a notice if the user has perms
-      if (
-        parsedPermissions['MANAGE_MESSAGES'] ||
-        parsedPermissions['MANAGE_CHANNELS'] ||
-        parsedPermissions['ADMINISTRATOR']
-      ) return args;
+      // There is no need to show a notice if the user has perms that bypass the slowmode
+      if (parsedPermissions['MANAGE_MESSAGES'] || parsedPermissions['MANAGE_CHANNELS']) return args;
 
-      if (this.cooldownTime() >= this.settings.get('slowmodeTrigger', '600')) {
-        if (!args[1]?.__DNSM_afterWarn) {
-          open(() => React.createElement(Modal, {
-            slowmode: this.cooldownTime(),
-            channel: channels.getChannelId(),
-            message: args[1]
-          }));
-          return false;
-        }
+
+      if (this.cooldownTime() < this.settings.get('slowmodeTrigger', '600')) return args;
+
+      if (!args[1]?.__DNSM_afterWarn) {
+        open(() => React.createElement(Modal, {
+          slowmode: this.cooldownTime(),
+          channel: channels.getChannelId(),
+          message: args[1]
+        }));
+        return false;
       }
       return args;
     }, true);
@@ -107,17 +104,6 @@ module.exports = class doNotSlowmode extends Plugin {
     return permissions;
   }
 
-  hasPermissions() {
-    console.log(highestRole.can(Permissions.ADD_REACTIONS, channels.getChannelId()))
-
-    if (highestRole.can(Permissions.MANAGE_MESSAGES, channels.getChannelId()) ||
-      highestRole.can(Permissions.MANAGE_CHANNELS, channels.getChannelId())
-    ) {
-      console.log('has permissions')
-      return true
-    }
-  }
-
   cooldownTime() {
     const channel = channels.getChannelId();
     return channelObj.getChannel(channel).rateLimitPerUser
@@ -131,7 +117,7 @@ module.exports = class doNotSlowmode extends Plugin {
   }
 
   pluginWillUnload() {
-    uninject('dontSlowmodeMeMommy')
+    uninject('dontSlowmodeMe')
     powercord.api.settings.unregisterSettings('DNSM!')
   }
 }
