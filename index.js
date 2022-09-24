@@ -38,16 +38,19 @@ module.exports = class doNotSlowmode extends Plugin {
       let parsedPermissions = this.parseBitFieldPermissions(permissions);
 
       // There is no need to show a notice if the user has perms that bypass the slowmode
-      if (parsedPermissions['MANAGE_MESSAGES'] || parsedPermissions['MANAGE_CHANNELS']) return args;
+      //if (parsedPermissions['MANAGE_MESSAGES'] || parsedPermissions['MANAGE_CHANNELS']) return args;
 
 
       if (this.cooldownTime() < this.settings.get('slowmodeTrigger', '600')) return args;
+      console.log(args)
 
       if (!args[1]?.__DNSM_afterWarn) {
         open(() => React.createElement(Modal, {
           slowmode: this.cooldownTime(),
           channel: channels.getChannelId(),
-          message: args[1]
+          message: args[1],
+          other: args[2],
+          reply: args[3]
         }));
         return false;
       }

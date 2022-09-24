@@ -6,7 +6,7 @@ const { FormTitle, Card, Text, Button } = require('powercord/components')
 const { sendMessage } = getModule([ 'sendMessage' ], false)
 const { ComponentDispatch } = getModule([ 'ComponentDispatch' ], false)
 
-module.exports = ({ slowmode, channel, message }) =>
+module.exports = ({ slowmode, channel, message, other = undefined, reply }) =>
   <Modal size={ Modal.Sizes.SMALL }>
     <Modal.Header>
       <FormTitle tag="h3">WARNING!</FormTitle>
@@ -22,7 +22,7 @@ module.exports = ({ slowmode, channel, message }) =>
         style={{ marginRight: '10px' }}
         onClick={ () => {
           closeModal();
-          sendMessage(channel, { ...message, __DNSM_afterWarn: true }) 
+          sendMessage(channel, { ...message, __DNSM_afterWarn: true }, other, reply) 
         }}
         color={ Button.Colors.RED }>
       Send Message Anyway
